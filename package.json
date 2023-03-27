@@ -25,11 +25,18 @@
   },
   "homepage": "https://github.com/ttdly/poke#readme",
   "dependencies": {
-    "@actions/core": "^1.10.0"
+    "@actions/core": "^1.10.0",
+    "nanoid": "^3.3.6"
   },
   "devDependencies": {
     "@actions/github": "^5.1.1",
     "@vercel/ncc": "^0.36.1",
-    "eslint": "^8.36.0"
+    "eslint": "^8.37.0",
+    "markdown-it": "^13.0.1",
+    "markdown-it-anchor": "^8.6.7",
+    "markdown-it-attrs": "^4.1.6",
+    "picocolors": "^1.0.0",
+    "shiki": "^0.14.1",
+    "shiki-processor": "^0.1.3"
   }
 }
