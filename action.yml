@@ -1,13 +1,22 @@
-name: 'Wait'
-description: 'Wait a designated number of milliseconds'
+name: 'Poke'
+description: 'Sync the GitHub Discussions to a markdown file'
 inputs:
-  milliseconds:  # id of input
-    description: 'number of milliseconds to wait'
+  token:
+    description: 'A github token for get info'
+    default: ${{ github.token }}
+  repository:
+    description: 'Repository name with owner. For example, ttdly/poke'
+    default: ${{ github.repository }}
+  number:
+    description: 'Which discussion you want to sync'
     required: true
-    default: '1000'
-outputs:
-  time: # output will be available to future steps
-    description: 'The current time after waiting'
+  type:
+    description: 'Which do you want to sync, discussion or comment'
+    default: ${{ github.event_name }}
+  path:
+    description: 'Where you want to store your files'
+    required: true
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
