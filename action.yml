@@ -4,18 +4,18 @@ inputs:
   token:
     description: 'A github token for get info'
     default: ${{ github.token }}
-  repository:
-    description: 'Repository name with owner. For example, ttdly/poke'
-    default: ${{ github.repository }}
-  number:
-    description: 'Which discussion you want to sync'
-    required: true
   type:
     description: 'Which do you want to sync, discussion or comment'
     default: ${{ github.event_name }}
-  path:
-    description: 'Where you want to store your files'
-    required: true
+  syncComments:
+    description: 'Do you want to sync comments?'
+    default: true
+  discussionDir:
+    description: 'Where you want to store your discussion files'
+    default: 'posts'
+  commentsDir:
+    description: 'Where you want to store your comments'
+    default: 'public'
 
 runs:
   using: 'node16'
