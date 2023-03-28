@@ -8,15 +8,13 @@
 
 ## 输入
 
-### `token`
-
-### `type`
-
-### `syncComments`
-
-### `discussionDir`
-
-### `commentsDir`
+| 名称            | 必需  | 默认          | 说明                    |
+|---------------|-----|-------------|-----------------------|
+| token         | 否   | 触发工作流的token | personal access token |
+| syncComments  | 否   | `true`      | 是否对评论进行同步             |
+| discussionDir | 否   | `posts`     | 存放discussions的文件夹     |
+| commentsDir   | 否   | `public`    | 存放comments的文件夹        |
+注意：对于comments，最终会被存放在`<commentsDir>/comment/<discussion.number>/comments.node_id.json`文件中
 
 ## 例子
 
@@ -25,3 +23,7 @@ uses: ttdly/poke@v1
 with:
   syncComments: false
 ```
+
+## 注意
+GitHub Discussion的各种接口还在测试，以后估计会有变更。  
+[poke的变更](https://github.com/ttdly/poke/blob/main/CHANGELOG.md)
