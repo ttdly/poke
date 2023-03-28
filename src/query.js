@@ -23,7 +23,7 @@ const commentBody = `author {
           createdAt
           body
         }
-      }`;
+      }`
 const discussionBody = `body
       createdAt
       title
@@ -34,9 +34,9 @@ const discussionBody = `body
           name
         }
         totalCount
-      }`;
-const queryCommentNode = function(other){
-    return `query comment($id: ID!){
+      }`
+const queryCommentNode = function(other) {
+  return `query comment($id: ID!){
   node(id: $id) {
     ... on DiscussionComment {
       ${other}
@@ -44,8 +44,8 @@ const queryCommentNode = function(other){
   }
 }`
 }
-const queryDiscussionNode = function (other){
-    return `query discussion($id: ID!){
+const queryDiscussionNode = function(other) {
+  return `query discussion($id: ID!){
   node(id: $id) {
     ... on Discussion {
       ${other}
@@ -53,12 +53,12 @@ const queryDiscussionNode = function (other){
   }
 }`
 }
-const queryCommentByNode = queryCommentNode(commentBody);
-const queryDiscussionByNode = queryDiscussionNode(discussionBody);
-const queryDiscussionReactionGroups = queryDiscussionNode(reactionGroups);
+const queryCommentByNode = queryCommentNode(commentBody)
+const queryDiscussionByNode = queryDiscussionNode(discussionBody)
+const queryDiscussionReactionGroups = queryDiscussionNode(reactionGroups)
 
 module.exports = {
-    queryCommentByNode,
-    queryDiscussionByNode,
-    queryDiscussionReactionGroups
+  queryCommentByNode,
+  queryDiscussionByNode,
+  queryDiscussionReactionGroups
 }
