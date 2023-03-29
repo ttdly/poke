@@ -16,6 +16,9 @@ inputs:
   commentsDir:
     description: 'Where you want to store your comments'
     default: 'public'
+  pageNum:
+    description: 'How many comments do you want to store per page'
+    default: 20
 
 runs:
   using: 'node16'

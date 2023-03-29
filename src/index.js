@@ -14,7 +14,8 @@ async function run() {
     }
     if (type === 'discussion_comment' && syncComments === true) {
       const commentsDir = core.getInput('commentsDir')
-      await comments.getComments(token, commentsDir)
+      const pageNum = core.getInput('pageNum')
+      await comments.getComments(token, commentsDir, pageNum)
     }
   } catch (error) {
     core.setFailed(error.message)

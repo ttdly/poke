@@ -28,7 +28,14 @@ const dealReplies = function(nodes, md) {
   }
   return replies
 }
-const saveComment = function(dir, disId, nodeId, comment) {
+/**
+ * 存储评论数据
+ * @param dir 目录
+ * @param disId discussion ID
+ * @param nodeId 评论ID
+ * @param comment 评论数据
+ */
+const saveComment = function(dir, disId, nodeId, comment, pageNum) {
   const rootDir = path.resolve(dir)
   const commentsDir = path.join(rootDir, ...['comments', String(disId)])
   const mapPath = path.join(commentsDir, 'map.json')
@@ -50,8 +57,7 @@ const saveComment = function(dir, disId, nodeId, comment) {
   }
   // 读取映射图
   commentMap = JSON.parse(fs.readFileSync(mapPath, { encoding: 'utf-8' }))
-  // 判断是否需要再加一页22为分界，实际上一页有效数据为20
-  if (commentMap.count === 20) {
+  if (commentMap.count === pageNum + 2) {
     try {
       const page = ++commentMap.page
       commentMap.count = 1
@@ -69,6 +75,7 @@ const saveComment = function(dir, disId, nodeId, comment) {
     // 更新映射图
     commentMap.sourceMap[nodeId] = `${commentMap.page}:${commentMap.count}`
     commentMap.count++
+    commentMap.total++
     // 写回数据
     fs.writeFileSync(mapPath, JSON.stringify(commentMap))
     fs.writeFileSync(path.join(commentsDir, `${commentMap.page}.json`), newPage)
@@ -77,7 +84,7 @@ const saveComment = function(dir, disId, nodeId, comment) {
     failed(nodeId, e)
   }
 }
-const getComments = async function(token, dir) {
+const getComments = async function(token, dir, pageNum) {
   const md = await createMarkdownRenderer()
   const payload = github.context.payload
   const nodeId = payload.comment.node_id
@@ -98,7 +105,7 @@ const getComments = async function(token, dir) {
     create: comment.createdAt,
     replies: dealReplies(comment.replies.nodes, md)
   }
-  saveComment(dir, disId, nodeId, JSON.stringify(convertedComment))
+  saveComment(dir, disId, nodeId, JSON.stringify(convertedComment), pageNum)
 }
 
 module.exports = {
