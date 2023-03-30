@@ -16,15 +16,6 @@ const getDiscussion = async function(token, dir) {
   })
   const discussion = data.node
 
-  const reactionGroups = await graphqlWithAuth(query.queryDiscussionReactionGroups, {
-    id: nodeId
-  })
-  let reaction = []
-  reactionGroups.node.reactionGroups.forEach(elem => {
-    if (elem.reactors.totalCount !== 0) {
-      reaction.push(`${elem.content}/${elem.reactors.totalCount}`)
-    }
-  })
 
   let labels = []
   const labelCount = discussion.labels.totalCount
@@ -36,14 +27,12 @@ const getDiscussion = async function(token, dir) {
 
   const updateStr = discussion.lastEditedAt ? 'update: ' + discussion.lastEditedAt + '\n' : ''
   const labelsStr = (labelCount) ? 'labels: ["' + labels.join('","') + '"]\n' : ''
-  const reactionStr = (reaction.length) ? 'reactions: ["' + reaction.join('","') + '"]\n' : ''
 
   const article = '---\n' +
     'title: ' + discussion.title + '\n' +
     'create: ' + discussion.createdAt + '\n' +
     updateStr +
     labelsStr +
-    reactionStr +
     '---\n\n' +
     discussion.body
 

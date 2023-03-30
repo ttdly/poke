@@ -35,6 +35,7 @@
     "markdown-it": "^13.0.1",
     "markdown-it-anchor": "^8.6.7",
     "markdown-it-attrs": "^4.1.6",
+    "pako": "^2.1.0",
     "picocolors": "^1.0.0",
     "shiki": "^0.14.1",
     "shiki-processor": "^0.1.3"

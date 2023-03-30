@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const pako = require('pako')
 const utils = require('./utils.js')
 const query = require('./query.js')
 const core = require('@actions/core')
@@ -34,11 +35,13 @@ const dealReplies = function(nodes, md) {
  * @param disId discussion ID
  * @param nodeId 评论ID
  * @param comment 评论数据
+ * @param pageNum 分页数据
  */
 const saveComment = function(dir, disId, nodeId, comment, pageNum) {
   const rootDir = path.resolve(dir)
   const commentsDir = path.join(rootDir, ...['comments', String(disId)])
   const mapPath = path.join(commentsDir, 'map.json')
+  let newPage = false
   let commentMap = {
     total: 0,
     page: 1,
@@ -50,38 +53,64 @@ const saveComment = function(dir, disId, nodeId, comment, pageNum) {
   if (!fs.existsSync(mapPath)) {
     try {
       fs.writeFileSync(mapPath, JSON.stringify(commentMap))
-      fs.writeFileSync(path.join(commentsDir, '1.json'), JSON.stringify([{}]))
+      newPage = true
     } catch (e) {
       failed(nodeId, e)
     }
   }
   // 读取映射图
   commentMap = JSON.parse(fs.readFileSync(mapPath, { encoding: 'utf-8' }))
+  let page = commentMap.page
   if (commentMap.count === pageNum + 2) {
     try {
-      const page = ++commentMap.page
+      page = ++commentMap.page
       commentMap.count = 1
       // 新增页
-      fs.writeFileSync(path.join(commentsDir, `${page}.json`), JSON.stringify([{}]))
+      newPage = true;
     } catch (e) {
       failed(nodeId, e)
     }
   }
   try {
-    // 读取页数据
-    const pageRaw = fs.readFileSync(path.join(commentsDir, `${commentMap.page}.json`), { encoding: 'utf-8' })
-    // 将新数据加入
-    const newPage = pageRaw.substring(0, pageRaw.length - 1) + `,${comment}]`
+    let pageRaw,pageNew;
+    if (newPage) {
+      pageNew = `[${comment}]`
+    } else {
+      // // 读取页数据
+      pageRaw = fs.readFileSync(path.join(commentsDir, `${page}.blob`))
+      const pageStr = pako.inflate(pageRaw,{to:'string'})
+      // 将新数据加入
+      pageNew = pageStr.substring(0, pageRaw.length - 1) + `,${comment}]`
+    }
+
     // 更新映射图
-    commentMap.sourceMap[nodeId] = `${commentMap.page}:${commentMap.count}`
+    commentMap.sourceMap[nodeId] = `${page}:${commentMap.count}`
     commentMap.count++
     commentMap.total++
     // 写回数据
     fs.writeFileSync(mapPath, JSON.stringify(commentMap))
-    fs.writeFileSync(path.join(commentsDir, `${commentMap.page}.json`), newPage)
+    const compressedPage = pako.deflate(pageNew)
+    fs.writeFileSync(path.join(commentsDir, `${page}.blob`), compressedPage)
     core.info('[POKE|comments.js]同步comment(' + nodeId + ')成功')
   } catch (e) {
     failed(nodeId, e)
+  }
+}
+
+const updateComment = function(dir, disId, nodeId, comment){
+  const rootDir = path.resolve(dir)
+  const commentsDir = path.join(rootDir, ...['comments', String(disId)])
+  const mapPath = path.join(commentsDir, 'map.json')
+  try {
+    const commentMap = JSON.parse(fs.readFileSync(mapPath, { encoding: 'utf-8' }))
+    const commentPlace = commentMap.sourceMap[nodeId].split(':');
+    let pageRaw = fs.readFileSync(path.join(commentsDir, `${commentPlace[1]}.blob`))
+    const pageObj = JSON.parse(pako.inflate(pageRaw,{to:'string'}))
+    pageObj[commentPlace[2]] = JSON.parse(comment);
+    pageRaw = pako.deflate(JSON.stringify(pageObj));
+    fs.writeFileSync(path.join(commentsDir, `${commentPlace[1]}.blob`),pageRaw)
+  } catch (e){
+    failed(nodeId,e)
   }
 }
 const getComments = async function(token, dir, pageNum) {
@@ -105,7 +134,11 @@ const getComments = async function(token, dir, pageNum) {
     create: comment.createdAt,
     replies: dealReplies(comment.replies.nodes, md)
   }
-  saveComment(dir, disId, nodeId, JSON.stringify(convertedComment), pageNum)
+  if (payload.action === 'created') {
+    saveComment(dir, disId, nodeId, JSON.stringify(convertedComment), pageNum)
+  } else if (payload.action === 'edited') {
+    updateComment(dir, disId, nodeId, JSON.stringify(convertedComment), pageNum)
+  }
 }
 
 module.exports = {
