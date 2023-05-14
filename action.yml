@@ -4,21 +4,12 @@ inputs:
   token:
     description: 'A github token for get info'
     default: ${{ github.token }}
-  type:
-    description: 'Which do you want to sync, discussion or comment'
-    default: ${{ github.event_name }}
-  syncComments:
-    description: 'Do you want to sync comments?'
-    default: true
   discussionDir:
     description: 'Where you want to store your discussion files'
     default: 'posts'
-  commentsDir:
-    description: 'Where you want to store your comments'
-    default: 'public'
-  pageNum:
-    description: 'How many comments do you want to store per page'
-    default: 20
+  pagesDir:
+    description: 'Where you want to store your page documentation'
+    default: 'pages'
 
 runs:
   using: 'node16'
