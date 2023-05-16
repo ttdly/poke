@@ -8,7 +8,7 @@ async function run() {
     const token = core.getInput('token')
     await discussions.getDiscussion(token, discussionDir, pagesDir)
   } catch (error) {
-    core.setFailed(error.message)
+    core.setFailed('[Poke]' + error.toString())
   }
 }
 

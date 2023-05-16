@@ -36,9 +36,9 @@ const getDiscussion = async function (token, posts, pages) {
       return ele.name
     })
   }
-  page.createLabelListPage(pages,labels);
+  page.createLabelListPage(pages, labels)
   page.createLabelPage(pages, labels, discussion, posts)
-  page.createHomePage(discussion,posts)
+  page.createHomePage(discussion, posts)
   const updateStr = discussion.lastEditedAt ? 'update: ' + discussion.lastEditedAt + '\n' : ''
   const labelsStr = labelCount ? 'labels: ["' + labels.join('","') + '"]\n' : ''
   const bodyWithPanGu = panGu.spacing(discussion.body)

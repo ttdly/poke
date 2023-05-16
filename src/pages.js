@@ -4,13 +4,13 @@ const path = require('path')
 const matter = require('gray-matter')
 const YAML = require('yaml')
 const util = require('./utils')
-const mergeTwoArray = function(long,short){
-  for(let i of short){
-    if(long.indexOf(i) === -1){
+const mergeTwoArray = function (long, short) {
+  for (let i of short) {
+    if (long.indexOf(i) === -1) {
       long.push(i)
     }
   }
-  return long;
+  return long
 }
 /**
  * 将对象转化为合适的格式
@@ -29,16 +29,28 @@ const toYamlFront = function (obj) {
  * @returns {[{time: string, title, url: string},...*]|*}
  */
 const dealWithItems = function (items, current) {
-  for (let i = 0; i < items.length; i++) {
-    if (items[i].url === current.url){
-      if(items[i].title !== current.title){
-        items[i].title = current.title
-      }
-      return items
+  let left = 0,
+    right = items.length,
+    mid = -1,
+    index = -1
+  while (left <= right) {
+    mid = (left + right) >> 1
+    if (items[mid].number === current.number) {
+      index = mid
+      break
+    } else if (items[mid].number < current.number) {
+      right = mid - 1
+    } else {
+      left = mid + 1
     }
   }
-  return [current, ...items]
+  if (index === -1) {
+    return [current, ...items]
+  }
+  items[index].title = current.title
+  return items
 }
+
 /**
  * 将discussion对象转换成合适的格式
  * @param discussion
@@ -49,7 +61,8 @@ const convertToItem = function (discussion, posts) {
   return {
     time: discussion.createdAt,
     title: discussion.title,
-    url: `/${posts}/${discussion.number}.html`
+    url: `/${posts}/${discussion.number}.html`,
+    number: discussion.number
   }
 }
 /**
@@ -69,7 +82,7 @@ const createLabelListPage = function (pages, labels) {
     if (fs.existsSync(file)) {
       const rawLabelsData = fs.readFileSync(file, { encoding: 'utf-8' })
       frontmatter = matter(rawLabelsData).data
-      frontmatter.labels = mergeTwoArray(frontmatter.labels,labels)
+      frontmatter.labels = mergeTwoArray(frontmatter.labels, labels)
     } else {
       frontmatter.labels = labels
     }
