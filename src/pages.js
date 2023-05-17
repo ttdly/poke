@@ -31,24 +31,18 @@ const toYamlFront = function (obj) {
 const dealWithItems = function (items, current) {
   let left = 0,
     right = items.length,
-    mid = -1,
-    index = -1
+    mid = -1
   while (left <= right) {
     mid = (left + right) >> 1
     if (items[mid].number === current.number) {
-      index = mid
-      break
+      return mid
     } else if (items[mid].number < current.number) {
       right = mid - 1
     } else {
       left = mid + 1
     }
   }
-  if (index === -1) {
-    return [current, ...items]
-  }
-  items[index].title = current.title
-  return items
+  return -1
 }
 
 /**
@@ -114,7 +108,12 @@ const createLabelPage = function (pages, labels, discussion, posts) {
       if (fs.existsSync(file)) {
         const rawLabelPageData = fs.readFileSync(file, { encoding: 'utf-8' })
         frontmatter = matter(rawLabelPageData).data
-        frontmatter.item = dealWithItems(frontmatter.item, discussion)
+        const index  = dealWithItems(frontmatter.item, discussion)
+        if (index === -1) {
+          frontmatter.item = [discussion, ...frontmatter.item]
+        } else {
+          frontmatter.item[index].title = discussion.title
+        }
       } else {
         frontmatter.label = label
         frontmatter.item.push(discussion)
@@ -143,7 +142,12 @@ const createHomePage = function (discussion, posts) {
     if (fs.existsSync(file)) {
       const rawHomePageData = fs.readFileSync(file, { encoding: 'utf-8' })
       frontmatter = matter(rawHomePageData).data
-      frontmatter.list = dealWithItems(frontmatter.list, item)
+      const index  = dealWithItems(frontmatter.list, item)
+      if (index === -1) {
+        frontmatter.list = [item, ...frontmatter.list]
+      } else {
+        frontmatter.list[index].title = item.title
+      }
     } else {
       frontmatter.list.push(item)
     }
@@ -155,8 +159,22 @@ const createHomePage = function (discussion, posts) {
   }
 }
 
+const lockPosts = function(labels,posts,pages,discussion){
+  console.log(pages)
+  // 先处理index.md文件
+  const home = path.resolve('index.md')
+  const rawHomePageData = fs.readFileSync(home, { encoding: 'utf-8' })
+  const frontmatter = matter(rawHomePageData).data
+  const item = convertToItem(discussion,posts);
+  const index = dealWithItems(frontmatter.list,item)
+  frontmatter.list.splice(index,1);
+  fs.writeFileSync(home,toYamlFront(frontmatter),{encoding:'utf-8'})
+  // 处理各个labels
+}
+
 module.exports = {
   createLabelListPage,
   createLabelPage,
-  createHomePage
+  createHomePage,
+  lockPosts
 }

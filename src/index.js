@@ -6,7 +6,7 @@ async function run() {
     const discussionDir = core.getInput('discussionDir')
     const pagesDir = core.getInput('pagesDir')
     const token = core.getInput('token')
-    await discussions.getDiscussion(token, discussionDir, pagesDir)
+    await discussions.deal(token, discussionDir, pagesDir)
   } catch (error) {
     core.setFailed('[Poke]' + error.toString())
   }
