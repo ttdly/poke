@@ -29,6 +29,10 @@ const toYamlFront = function (obj) {
  * @returns {[{time: string, title, url: string},...*]|*}
  */
 const dealWithItems = function (items, current) {
+  // 空数组就不处理了
+  if (items.length === 0) {
+    return -1
+  }
   let left = 0,
     right = items.length,
     mid = -1
@@ -108,7 +112,7 @@ const createLabelPage = function (pages, labels, discussion, posts) {
       if (fs.existsSync(file)) {
         const rawLabelPageData = fs.readFileSync(file, { encoding: 'utf-8' })
         frontmatter = matter(rawLabelPageData).data
-        const index  = dealWithItems(frontmatter.item, discussion)
+        const index = dealWithItems(frontmatter.item, discussion)
         if (index === -1) {
           frontmatter.item = [discussion, ...frontmatter.item]
         } else {
@@ -120,9 +124,9 @@ const createLabelPage = function (pages, labels, discussion, posts) {
       }
       const newRaw = toYamlFront(frontmatter)
       fs.writeFileSync(file, newRaw, { encoding: 'utf-8' })
-      core.info('[POKE|page.js]生成分类列表文档成功')
+      core.info('[POKE|pages.js]生成分类列表文档成功')
     } catch (e) {
-      core.setFailed('[POKE|page.js]' + e.toString() + discussion)
+      core.setFailed('[POKE|pages.js]' + e.toString() + discussion)
     }
   }
 }
@@ -142,7 +146,7 @@ const createHomePage = function (discussion, posts) {
     if (fs.existsSync(file)) {
       const rawHomePageData = fs.readFileSync(file, { encoding: 'utf-8' })
       frontmatter = matter(rawHomePageData).data
-      const index  = dealWithItems(frontmatter.list, item)
+      const index = dealWithItems(frontmatter.list, item)
       if (index === -1) {
         frontmatter.list = [item, ...frontmatter.list]
       } else {
@@ -153,23 +157,40 @@ const createHomePage = function (discussion, posts) {
     }
     const newRaw = toYamlFront(frontmatter)
     fs.writeFileSync(file, newRaw, { encoding: 'utf-8' })
-    core.info('[POKE|page.js]生成 index.md 成功')
+    core.info('[POKE|pages.js]生成 index.md 成功')
   } catch (e) {
-    core.setFailed('[POKE|page,js]' + e.toString())
+    core.setFailed('[POKE|pages.js]' + e.toString())
   }
 }
 
-const lockPosts = function(labels,posts,pages,discussion){
-  console.log(pages)
+const lockPosts = function (labels, posts, pages, discussion) {
   // 先处理index.md文件
+  let frontmatter, index
   const home = path.resolve('index.md')
   const rawHomePageData = fs.readFileSync(home, { encoding: 'utf-8' })
-  const frontmatter = matter(rawHomePageData).data
-  const item = convertToItem(discussion,posts);
-  const index = dealWithItems(frontmatter.list,item)
-  frontmatter.list.splice(index,1);
-  fs.writeFileSync(home,toYamlFront(frontmatter),{encoding:'utf-8'})
+  frontmatter = matter(rawHomePageData).data
+  const item = convertToItem(discussion, posts)
+  index = dealWithItems(frontmatter.list, item)
+  if (index !== -1) {
+    frontmatter.list.splice(index, 1)
+    fs.writeFileSync(home, toYamlFront(frontmatter), { encoding: 'utf-8' })
+  }
+  core.info('[POKE|pages.js]处理 index.md 结束')
   // 处理各个labels
+  const labelPage = path.resolve(pages)
+  for (const item of labels) {
+    frontmatter = {}
+    const file = path.join(labelPage, `${item}.md`)
+    const rawLabelPageData = fs.readFileSync(file, { encoding: 'utf-8' })
+    frontmatter = matter(rawLabelPageData).data
+    index = dealWithItems(frontmatter.item, discussion)
+    if (index === -1) {
+      frontmatter.item.splice(index, 1)
+      fs.writeFileSync(file, toYamlFront(frontmatter), { encoding: 'utf-8' })
+    }
+    core.info('[POKE|pages.js]处理 ' + item + '.md 结束')
+  }
+  core.info('[POKE|pages.js]处理 lock 事件结束')
 }
 
 module.exports = {

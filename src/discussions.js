@@ -7,9 +7,7 @@ const github = require('@actions/github')
 const panGu = require('pangu')
 const page = require('./pages.js')
 
-
-
-const deal = async function(token, posts, pages) {
+const deal = async function (token, posts, pages) {
   let discussion = {
     labels: {
       totalCount: 0
@@ -39,10 +37,10 @@ const deal = async function(token, posts, pages) {
     })
   }
 
-  if( action === "created" || action === "edited") {
-    await getDiscussion(posts,pages,labels,labelCount,discussion);
-  } else if (action === "lock") {
-    page.lockPosts(labels,posts,pages,discussion)
+  if (action === 'created' || action === 'edited' || action === 'unlocked') {
+    await getDiscussion(posts, pages, labels, labelCount, discussion)
+  } else if (action === 'locked') {
+    page.lockPosts(labels, posts, pages, discussion)
   }
 }
 /**
@@ -53,7 +51,7 @@ const deal = async function(token, posts, pages) {
  * @param labelCount 标签数
  * @returns null
  */
-const getDiscussion = function (posts, pages,labels,labelCount,discussion) {
+const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
   page.createLabelListPage(pages, labels)
   page.createLabelPage(pages, labels, discussion, posts)
   page.createHomePage(discussion, posts)
