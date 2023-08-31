@@ -11435,220 +11435,6 @@ function onceStrict (fn) {
 
 /***/ }),
 
-/***/ 136:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-"use strict";
-
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-var fs = __nccwpck_require__(7147);
-
-var _require = __nccwpck_require__(3930),
-    Pangu = _require.Pangu;
-
-var NodePangu = function (_Pangu) {
-  _inherits(NodePangu, _Pangu);
-
-  function NodePangu() {
-    _classCallCheck(this, NodePangu);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(NodePangu).apply(this, arguments));
-  }
-
-  _createClass(NodePangu, [{
-    key: "spacingFile",
-    value: function spacingFile(path) {
-      var _this = this;
-
-      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-      return new Promise(function (resolve, reject) {
-        fs.readFile(path, 'utf8', function (err, data) {
-          if (err) {
-            reject(err);
-            return callback(err);
-          }
-
-          var spacingData = _this.spacing(data);
-
-          resolve(spacingData);
-          return callback(null, spacingData);
-        });
-      });
-    }
-  }, {
-    key: "spacingFileSync",
-    value: function spacingFileSync(path) {
-      return this.spacing(fs.readFileSync(path, 'utf8'));
-    }
-  }]);
-
-  return NodePangu;
-}(Pangu);
-
-var pangu = new NodePangu();
-module.exports = pangu;
-module.exports["default"] = pangu;
-module.exports.Pangu = NodePangu;
-
-/***/ }),
-
-/***/ 3930:
-/***/ ((module) => {
-
-"use strict";
-
-
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var CJK = "\u2E80-\u2EFF\u2F00-\u2FDF\u3040-\u309F\u30A0-\u30FA\u30FC-\u30FF\u3100-\u312F\u3200-\u32FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF";
-var ANY_CJK = new RegExp("[".concat(CJK, "]"));
-var CONVERT_TO_FULLWIDTH_CJK_SYMBOLS_CJK = new RegExp("([".concat(CJK, "])[ ]*([\\:]+|\\.)[ ]*([").concat(CJK, "])"), 'g');
-var CONVERT_TO_FULLWIDTH_CJK_SYMBOLS = new RegExp("([".concat(CJK, "])[ ]*([~\\!;,\\?]+)[ ]*"), 'g');
-var DOTS_CJK = new RegExp("([\\.]{2,}|\u2026)([".concat(CJK, "])"), 'g');
-var FIX_CJK_COLON_ANS = new RegExp("([".concat(CJK, "])\\:([A-Z0-9\\(\\)])"), 'g');
-var CJK_QUOTE = new RegExp("([".concat(CJK, "])([`\"\u05F4])"), 'g');
-var QUOTE_CJK = new RegExp("([`\"\u05F4])([".concat(CJK, "])"), 'g');
-var FIX_QUOTE_ANY_QUOTE = /([`"\u05f4]+)[ ]*(.+?)[ ]*([`"\u05f4]+)/g;
-var CJK_SINGLE_QUOTE_BUT_POSSESSIVE = new RegExp("([".concat(CJK, "])('[^s])"), 'g');
-var SINGLE_QUOTE_CJK = new RegExp("(')([".concat(CJK, "])"), 'g');
-var FIX_POSSESSIVE_SINGLE_QUOTE = new RegExp("([A-Za-z0-9".concat(CJK, "])( )('s)"), 'g');
-var HASH_ANS_CJK_HASH = new RegExp("([".concat(CJK, "])(#)([").concat(CJK, "]+)(#)([").concat(CJK, "])"), 'g');
-var CJK_HASH = new RegExp("([".concat(CJK, "])(#([^ ]))"), 'g');
-var HASH_CJK = new RegExp("(([^ ])#)([".concat(CJK, "])"), 'g');
-var CJK_OPERATOR_ANS = new RegExp("([".concat(CJK, "])([\\+\\-\\*\\/=&\\|<>])([A-Za-z0-9])"), 'g');
-var ANS_OPERATOR_CJK = new RegExp("([A-Za-z0-9])([\\+\\-\\*\\/=&\\|<>])([".concat(CJK, "])"), 'g');
-var FIX_SLASH_AS = /([/]) ([a-z\-_\./]+)/g;
-var FIX_SLASH_AS_SLASH = /([/\.])([A-Za-z\-_\./]+) ([/])/g;
-var CJK_LEFT_BRACKET = new RegExp("([".concat(CJK, "])([\\(\\[\\{<>\u201C])"), 'g');
-var RIGHT_BRACKET_CJK = new RegExp("([\\)\\]\\}<>\u201D])([".concat(CJK, "])"), 'g');
-var FIX_LEFT_BRACKET_ANY_RIGHT_BRACKET = /([\(\[\{<\u201c]+)[ ]*(.+?)[ ]*([\)\]\}>\u201d]+)/;
-var ANS_CJK_LEFT_BRACKET_ANY_RIGHT_BRACKET = new RegExp("([A-Za-z0-9".concat(CJK, "])[ ]*([\u201C])([A-Za-z0-9").concat(CJK, "\\-_ ]+)([\u201D])"), 'g');
-var LEFT_BRACKET_ANY_RIGHT_BRACKET_ANS_CJK = new RegExp("([\u201C])([A-Za-z0-9".concat(CJK, "\\-_ ]+)([\u201D])[ ]*([A-Za-z0-9").concat(CJK, "])"), 'g');
-var AN_LEFT_BRACKET = /([A-Za-z0-9])([\(\[\{])/g;
-var RIGHT_BRACKET_AN = /([\)\]\}])([A-Za-z0-9])/g;
-var CJK_ANS = new RegExp("([".concat(CJK, "])([A-Za-z\u0370-\u03FF0-9@\\$%\\^&\\*\\-\\+\\\\=\\|/\xA1-\xFF\u2150-\u218F\u2700\u2014\u27BF])"), 'g');
-var ANS_CJK = new RegExp("([A-Za-z\u0370-\u03FF0-9~\\$%\\^&\\*\\-\\+\\\\=\\|/!;:,\\.\\?\xA1-\xFF\u2150-\u218F\u2700\u2014\u27BF])([".concat(CJK, "])"), 'g');
-var S_A = /(%)([A-Za-z])/g;
-var MIDDLE_DOT = /([ ]*)([\u00b7\u2022\u2027])([ ]*)/g;
-
-var Pangu = function () {
-  function Pangu() {
-    _classCallCheck(this, Pangu);
-
-    this.version = '4.0.7';
-  }
-
-  _createClass(Pangu, [{
-    key: "convertToFullwidth",
-    value: function convertToFullwidth(symbols) {
-      return symbols.replace(/~/g, '～').replace(/!/g, '！').replace(/;/g, '；').replace(/:/g, '：').replace(/,/g, '，').replace(/\./g, '。').replace(/\?/g, '？');
-    }
-  }, {
-    key: "spacing",
-    value: function spacing(text) {
-      if (typeof text !== 'string') {
-        console.warn("spacing(text) only accepts string but got ".concat(_typeof(text)));
-        return text;
-      }
-
-      if (text.length <= 1 || !ANY_CJK.test(text)) {
-        return text;
-      }
-
-      var self = this;
-      var newText = text;
-      newText = newText.replace(CONVERT_TO_FULLWIDTH_CJK_SYMBOLS_CJK, function (match, leftCjk, symbols, rightCjk) {
-        var fullwidthSymbols = self.convertToFullwidth(symbols);
-        return "".concat(leftCjk).concat(fullwidthSymbols).concat(rightCjk);
-      });
-      newText = newText.replace(CONVERT_TO_FULLWIDTH_CJK_SYMBOLS, function (match, cjk, symbols) {
-        var fullwidthSymbols = self.convertToFullwidth(symbols);
-        return "".concat(cjk).concat(fullwidthSymbols);
-      });
-      newText = newText.replace(DOTS_CJK, '$1 $2');
-      newText = newText.replace(FIX_CJK_COLON_ANS, '$1：$2');
-      newText = newText.replace(CJK_QUOTE, '$1 $2');
-      newText = newText.replace(QUOTE_CJK, '$1 $2');
-      newText = newText.replace(FIX_QUOTE_ANY_QUOTE, '$1$2$3');
-      newText = newText.replace(CJK_SINGLE_QUOTE_BUT_POSSESSIVE, '$1 $2');
-      newText = newText.replace(SINGLE_QUOTE_CJK, '$1 $2');
-      newText = newText.replace(FIX_POSSESSIVE_SINGLE_QUOTE, "$1's");
-      newText = newText.replace(HASH_ANS_CJK_HASH, '$1 $2$3$4 $5');
-      newText = newText.replace(CJK_HASH, '$1 $2');
-      newText = newText.replace(HASH_CJK, '$1 $3');
-      newText = newText.replace(CJK_OPERATOR_ANS, '$1 $2 $3');
-      newText = newText.replace(ANS_OPERATOR_CJK, '$1 $2 $3');
-      newText = newText.replace(FIX_SLASH_AS, '$1$2');
-      newText = newText.replace(FIX_SLASH_AS_SLASH, '$1$2$3');
-      newText = newText.replace(CJK_LEFT_BRACKET, '$1 $2');
-      newText = newText.replace(RIGHT_BRACKET_CJK, '$1 $2');
-      newText = newText.replace(FIX_LEFT_BRACKET_ANY_RIGHT_BRACKET, '$1$2$3');
-      newText = newText.replace(ANS_CJK_LEFT_BRACKET_ANY_RIGHT_BRACKET, '$1 $2$3$4');
-      newText = newText.replace(LEFT_BRACKET_ANY_RIGHT_BRACKET_ANS_CJK, '$1$2$3 $4');
-      newText = newText.replace(AN_LEFT_BRACKET, '$1 $2');
-      newText = newText.replace(RIGHT_BRACKET_AN, '$1 $2');
-      newText = newText.replace(CJK_ANS, '$1 $2');
-      newText = newText.replace(ANS_CJK, '$1 $2');
-      newText = newText.replace(S_A, '$1 $2');
-      newText = newText.replace(MIDDLE_DOT, '・');
-      return newText;
-    }
-  }, {
-    key: "spacingText",
-    value: function spacingText(text) {
-      var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-      var newText;
-
-      try {
-        newText = this.spacing(text);
-      } catch (err) {
-        callback(err);
-        return;
-      }
-
-      callback(null, newText);
-    }
-  }, {
-    key: "spacingTextSync",
-    value: function spacingTextSync(text) {
-      return this.spacing(text);
-    }
-  }]);
-
-  return Pangu;
-}();
-
-var pangu = new Pangu();
-module.exports = pangu;
-module.exports["default"] = pangu;
-module.exports.Pangu = Pangu;
-
-/***/ }),
-
 /***/ 8428:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -14979,31 +14765,19 @@ const utils = __nccwpck_require__(8083)
 const query = __nccwpck_require__(3767)
 const core = __nccwpck_require__(7733)
 const github = __nccwpck_require__(3695)
-const panGu = __nccwpck_require__(136)
 const page = __nccwpck_require__(4884)
 
-let discussion = {
-  labels: {
-    totalCount: 0
-  },
-  lastEditedAt: '',
-  createdAt: '',
-  number: 0,
-  title: '',
-  comments: {
-    totalCount: 0
-  }
-}
-const getDiscussion = async function (token, posts, pages) {
+const deal = async function (token, posts, pages) {
+  let discussion
   const octokit = github.getOctokit(token)
   const graphqlWithAuth = octokit.graphql
   const payload = github.context.payload
+  const action = payload.action
   const nodeId = payload.discussion.node_id
   const data = await graphqlWithAuth(query.queryDiscussionByNode, {
     id: nodeId
   })
   discussion = data.node
-
   let labels = []
   const labelCount = discussion.labels.totalCount
   if (labelCount > 0) {
@@ -15011,17 +14785,32 @@ const getDiscussion = async function (token, posts, pages) {
       return ele.name
     })
   }
+
+  if (action === 'created' || action === 'edited' || action === 'unlocked') {
+    await getDiscussion(posts, pages, labels, labelCount, discussion)
+  } else if (action === 'locked') {
+    page.lockPosts(labels, posts, pages, discussion)
+  }
+}
+/**
+ * 同步discussion
+ * @param posts 文档存储路径
+ * @param pages 标签文件存储路径
+ * @param labels 标签
+ * @param labelCount 标签数
+ * @param discussion 文章对象
+ * @returns null
+ */
+const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
   page.createLabelListPage(pages, labels)
   page.createLabelPage(pages, labels, discussion, posts)
   page.createHomePage(discussion, posts)
   const updateStr = discussion.lastEditedAt ? 'update: ' + discussion.lastEditedAt + '\n' : ''
   const labelsStr = labelCount ? 'labels: ["' + labels.join('","') + '"]\n' : ''
-  const bodyWithPanGu = panGu.spacing(discussion.body)
-
   const article =
     '---\n' +
     'title: ' +
-    panGu.spacing(discussion.title) +
+    discussion.title +
     '\n' +
     'create: ' +
     discussion.createdAt +
@@ -15032,8 +14821,7 @@ const getDiscussion = async function (token, posts, pages) {
     discussion.comments.totalCount +
     '\n' +
     '---\n\n' +
-    bodyWithPanGu
-
+    discussion.body
   const dirPath = path.resolve(posts)
   const filePath = path.join(dirPath, discussion.number + '.md')
   utils.isExitsMk(dirPath)
@@ -15046,7 +14834,7 @@ const getDiscussion = async function (token, posts, pages) {
 }
 
 module.exports = {
-  getDiscussion
+  deal
 }
 
 
@@ -15086,26 +14874,24 @@ const toYamlFront = function (obj) {
  * @returns {[{time: string, title, url: string},...*]|*}
  */
 const dealWithItems = function (items, current) {
+  // 空数组就不处理了
+  if (items.length === 0) {
+    return -1
+  }
   let left = 0,
     right = items.length,
-    mid = -1,
-    index = -1
+    mid = -1
   while (left <= right) {
     mid = (left + right) >> 1
     if (items[mid].number === current.number) {
-      index = mid
-      break
+      return mid
     } else if (items[mid].number < current.number) {
       right = mid - 1
     } else {
       left = mid + 1
     }
   }
-  if (index === -1) {
-    return [current, ...items]
-  }
-  items[index].title = current.title
-  return items
+  return -1
 }
 
 /**
@@ -15158,7 +14944,7 @@ const createLabelListPage = function (pages, labels) {
  * @param posts 文档存储文件夹
  */
 const createLabelPage = function (pages, labels, discussion, posts) {
-  const pagesDir = path.resolve('pages')
+  const pagesDir = __nccwpck_require__.ab + "pages"
   discussion = convertToItem(discussion, posts)
   let frontmatter = {
     page: 'label',
@@ -15167,20 +14953,25 @@ const createLabelPage = function (pages, labels, discussion, posts) {
   }
   for (const label of labels) {
     try {
-      const file = path.join(pagesDir, label + '.md')
+      const file = __nccwpck_require__.ab + "pages/" + label + '.md'
       if (fs.existsSync(file)) {
         const rawLabelPageData = fs.readFileSync(file, { encoding: 'utf-8' })
         frontmatter = matter(rawLabelPageData).data
-        frontmatter.item = dealWithItems(frontmatter.item, discussion)
+        const index = dealWithItems(frontmatter.item, discussion)
+        if (index === -1) {
+          frontmatter.item = [discussion, ...frontmatter.item]
+        } else {
+          frontmatter.item[index].title = discussion.title
+        }
       } else {
         frontmatter.label = label
         frontmatter.item.push(discussion)
       }
       const newRaw = toYamlFront(frontmatter)
       fs.writeFileSync(file, newRaw, { encoding: 'utf-8' })
-      core.info('[POKE|page.js]生成分类列表文档成功')
+      core.info('[POKE|pages.js]生成分类列表文档成功')
     } catch (e) {
-      core.setFailed('[POKE|page.js]' + e.toString() + discussion)
+      core.setFailed('[POKE|pages.js]' + e.toString() + discussion)
     }
   }
 }
@@ -15190,32 +14981,68 @@ const createLabelPage = function (pages, labels, discussion, posts) {
  * @param posts
  */
 const createHomePage = function (discussion, posts) {
-  const file = path.resolve('index.md')
+  const file = __nccwpck_require__.ab + "index.md"
   const item = convertToItem(discussion, posts)
   let frontmatter = {
     page: 'list',
     list: []
   }
   try {
-    if (fs.existsSync(file)) {
+    if (fs.existsSync(__nccwpck_require__.ab + "index.md")) {
       const rawHomePageData = fs.readFileSync(file, { encoding: 'utf-8' })
       frontmatter = matter(rawHomePageData).data
-      frontmatter.list = dealWithItems(frontmatter.list, item)
+      const index = dealWithItems(frontmatter.list, item)
+      if (index === -1) {
+        frontmatter.list = [item, ...frontmatter.list]
+      } else {
+        frontmatter.list[index].title = item.title
+      }
     } else {
       frontmatter.list.push(item)
     }
     const newRaw = toYamlFront(frontmatter)
-    fs.writeFileSync(file, newRaw, { encoding: 'utf-8' })
-    core.info('[POKE|page.js]生成 index.md 成功')
+    fs.writeFileSync(__nccwpck_require__.ab + "index.md", newRaw, { encoding: 'utf-8' })
+    core.info('[POKE|pages.js]生成 index.md 成功')
   } catch (e) {
-    core.setFailed('[POKE|page,js]' + e.toString())
+    core.setFailed('[POKE|pages.js]' + e.toString())
   }
+}
+
+const lockPosts = function (labels, posts, pages, discussion) {
+  // 先处理index.md文件
+  let frontmatter, index
+  const home = __nccwpck_require__.ab + "index.md"
+  const rawHomePageData = fs.readFileSync(__nccwpck_require__.ab + "index.md", { encoding: 'utf-8' })
+  frontmatter = matter(rawHomePageData).data
+  const item = convertToItem(discussion, posts)
+  index = dealWithItems(frontmatter.list, item)
+  if (index !== -1) {
+    frontmatter.list.splice(index, 1)
+    fs.writeFileSync(__nccwpck_require__.ab + "index.md", toYamlFront(frontmatter), { encoding: 'utf-8' })
+  }
+  core.info('[POKE|pages.js]处理 index.md 结束')
+  // 处理各个labels
+  const labelPage = path.resolve(pages)
+  for (const item of labels) {
+    frontmatter = {}
+    const file = path.join(labelPage, `${item}.md`)
+    const rawLabelPageData = fs.readFileSync(file, { encoding: 'utf-8' })
+    frontmatter = matter(rawLabelPageData).data
+    index = dealWithItems(frontmatter.item, discussion)
+    if (index === -1) {
+      frontmatter.item.splice(index, 1)
+      fs.writeFileSync(file, toYamlFront(frontmatter), { encoding: 'utf-8' })
+    }
+    core.info('[POKE|pages.js]处理 ' + item + '.md 结束')
+  }
+  core.info('[POKE|pages.js]处理 lock 事件结束')
 }
 
 module.exports = {
   createLabelListPage,
   createLabelPage,
-  createHomePage
+  createHomePage,
+  lockPosts
 }
 
 
@@ -23803,7 +23630,7 @@ async function run() {
     const discussionDir = core.getInput('discussionDir')
     const pagesDir = core.getInput('pagesDir')
     const token = core.getInput('token')
-    await discussions.getDiscussion(token, discussionDir, pagesDir)
+    await discussions.deal(token, discussionDir, pagesDir)
   } catch (error) {
     core.setFailed('[Poke]' + error.toString())
   }
