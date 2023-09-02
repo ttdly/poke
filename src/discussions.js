@@ -4,7 +4,6 @@ const utils = require('./utils.js')
 const query = require('./query.js')
 const core = require('@actions/core')
 const github = require('@actions/github')
-const panGu = require('pangu')
 const page = require('./pages.js')
 
 const deal = async function (token, posts, pages) {
@@ -49,6 +48,7 @@ const deal = async function (token, posts, pages) {
  * @param pages 标签文件存储路径
  * @param labels 标签
  * @param labelCount 标签数
+ * @param discussion 文章对象
  * @returns null
  */
 const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
@@ -57,11 +57,10 @@ const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
   page.createHomePage(discussion, posts)
   const updateStr = discussion.lastEditedAt ? 'update: ' + discussion.lastEditedAt + '\n' : ''
   const labelsStr = labelCount ? 'labels: ["' + labels.join('","') + '"]\n' : ''
-  const bodyWithPanGu = panGu.spacing(discussion.body)
   const article =
     '---\n' +
     'title: ' +
-    panGu.spacing(discussion.title) +
+    discussion.title +
     '\n' +
     'create: ' +
     discussion.createdAt +
@@ -72,9 +71,10 @@ const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
     discussion.comments.totalCount +
     '\n' +
     '---\n\n' +
-    bodyWithPanGu
+    discussion.body
   const dirPath = path.resolve(posts)
   const filePath = path.join(dirPath, discussion.number + '.md')
+  core.debug("[POKE|FilePath] " + filePath)
   utils.isExitsMk(dirPath)
   try {
     fs.writeFileSync(filePath, article)
