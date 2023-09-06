@@ -14767,7 +14767,7 @@ const core = __nccwpck_require__(7733)
 const github = __nccwpck_require__(3695)
 const page = __nccwpck_require__(4884)
 
-const deal = async function (token, posts, pages) {
+const deal = async function (token, posts, pages, homePage) {
   let discussion = {
     labels: {
       totalCount: 0
@@ -14798,9 +14798,9 @@ const deal = async function (token, posts, pages) {
   }
 
   if (action === 'created' || action === 'edited' || action === 'unlocked') {
-    await getDiscussion(posts, pages, labels, labelCount, discussion)
+    await getDiscussion(posts, pages, labels, labelCount, discussion, homePage)
   } else if (action === 'locked') {
-    page.lockPosts(labels, posts, pages, discussion)
+    page.lockPosts(labels, posts, pages, discussion, homePage)
   }
 }
 /**
@@ -14810,12 +14810,13 @@ const deal = async function (token, posts, pages) {
  * @param labels 标签
  * @param labelCount 标签数
  * @param discussion 文章对象
+ * @param homePage 主页文件
  * @returns null
  */
-const getDiscussion = function (posts, pages, labels, labelCount, discussion) {
+const getDiscussion = function (posts, pages, labels, labelCount, discussion, homePage) {
   page.createLabelListPage(pages, labels)
   page.createLabelPage(pages, labels, discussion, posts)
-  page.createHomePage(discussion, posts)
+  page.createHomePage(discussion, posts, homePage)
   const updateStr = discussion.lastEditedAt ? 'update: ' + discussion.lastEditedAt + '\n' : ''
   const labelsStr = labelCount ? 'labels: ["' + labels.join('","') + '"]\n' : ''
   const article =
@@ -14991,18 +14992,19 @@ const createLabelPage = function (pages, labels, discussion, posts) {
 }
 /**
  * 创建index.md
- * @param discussion discussion对象
- * @param posts
+ * @param discussion discussion 对象
+ * @param posts 文章存储路径
+ * @param homePage 主页
  */
-const createHomePage = function (discussion, posts) {
-  const file = __nccwpck_require__.ab + "index.md"
+const createHomePage = function (discussion, posts, homePage) {
+  const file = path.resolve(homePage)
   const item = convertToItem(discussion, posts)
   let frontmatter = {
     page: 'list',
     list: []
   }
   try {
-    if (fs.existsSync(__nccwpck_require__.ab + "index.md")) {
+    if (fs.existsSync(file)) {
       const rawHomePageData = fs.readFileSync(file, { encoding: 'utf-8' })
       frontmatter = matter(rawHomePageData).data
       const index = dealWithItems(frontmatter.list, item)
@@ -15016,25 +15018,33 @@ const createHomePage = function (discussion, posts) {
     }
     const newRaw = toYamlFront(frontmatter)
     core.debug("[POKE|FilePath] " + file)
-    fs.writeFileSync(__nccwpck_require__.ab + "index.md", newRaw, { encoding: 'utf-8' })
+    fs.writeFileSync(file, newRaw, { encoding: 'utf-8' })
     core.info('[POKE|pages.js]生成 index.md 成功')
   } catch (e) {
     core.setFailed('[POKE|pages.js]' + e.toString())
   }
 }
 
-const lockPosts = function (labels, posts, pages, discussion) {
+/**
+ * 删除文章
+ * @param labels 标签
+ * @param posts 文章路径
+ * @param pages 页面路径
+ * @param discussion 文章对象
+ * @param homePage 主页文件
+ */
+const lockPosts = function (labels, posts, pages, discussion, homePage) {
   // 先处理index.md文件
   let frontmatter, index
-  const home = __nccwpck_require__.ab + "index.md"
-  const rawHomePageData = fs.readFileSync(__nccwpck_require__.ab + "index.md", { encoding: 'utf-8' })
+  const home = path.resolve(homePage)
+  const rawHomePageData = fs.readFileSync(home, { encoding: 'utf-8' })
   frontmatter = matter(rawHomePageData).data
   const item = convertToItem(discussion, posts)
   index = dealWithItems(frontmatter.list, item)
   if (index !== -1) {
     frontmatter.list.splice(index, 1)
     core.debug("[POKE|FilePath] " + home)
-    fs.writeFileSync(__nccwpck_require__.ab + "index.md", toYamlFront(frontmatter), { encoding: 'utf-8' })
+    fs.writeFileSync(home, toYamlFront(frontmatter), { encoding: 'utf-8' })
   }
   core.info('[POKE|pages.js]处理 index.md 结束')
   // 处理各个labels
@@ -23646,7 +23656,8 @@ async function run() {
     const discussionDir = core.getInput('discussionDir')
     const pagesDir = core.getInput('pagesDir')
     const token = core.getInput('token')
-    await discussions.deal(token, discussionDir, pagesDir)
+    const homePage = core.getInput('homePage')
+    await discussions.deal(token, discussionDir, pagesDir, homePage)
   } catch (error) {
     core.setFailed('[Poke]' + error.toString())
   }
