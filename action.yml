@@ -10,6 +10,10 @@ inputs:
   pagesDir:
     description: 'Where you want to store your page documentation'
     default: 'pages'
+  homePage:
+    description: 'The home page location'
+    default: 'index.md'
+    required: false
 
 runs:
   using: 'node16'

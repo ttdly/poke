@@ -134,11 +134,12 @@ const createLabelPage = function (pages, labels, discussion, posts) {
 }
 /**
  * 创建index.md
- * @param discussion discussion对象
- * @param posts
+ * @param discussion discussion 对象
+ * @param posts 文章存储路径
+ * @param homePage 主页
  */
-const createHomePage = function (discussion, posts) {
-  const file = path.resolve('index.md')
+const createHomePage = function (discussion, posts, homePage) {
+  const file = path.resolve(homePage)
   const item = convertToItem(discussion, posts)
   let frontmatter = {
     page: 'list',
@@ -166,10 +167,18 @@ const createHomePage = function (discussion, posts) {
   }
 }
 
-const lockPosts = function (labels, posts, pages, discussion) {
+/**
+ * 删除文章
+ * @param labels 标签
+ * @param posts 文章路径
+ * @param pages 页面路径
+ * @param discussion 文章对象
+ * @param homePage 主页文件
+ */
+const lockPosts = function (labels, posts, pages, discussion, homePage) {
   // 先处理index.md文件
   let frontmatter, index
-  const home = path.resolve('index.md')
+  const home = path.resolve(homePage)
   const rawHomePageData = fs.readFileSync(home, { encoding: 'utf-8' })
   frontmatter = matter(rawHomePageData).data
   const item = convertToItem(discussion, posts)
